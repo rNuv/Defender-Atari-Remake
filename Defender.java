@@ -21,29 +21,30 @@ public class Defender extends Application implements EventHandler<InputEvent>
 {
 	GraphicsContext gc;
 	Image shipImg;
+	Image background;
 	int x = 0;
 	int y = 0;
 	Canvas canvas;
 	AnimateObjects animate;
+	private Menu menu;
 	ArrayList<GameObject> players = new ArrayList<>();
+
+	private enum STATE{
+		MENU,
+		GAME
+	};
+
+	private STATE state = STATE.MENU;
 
 	public class AnimateObjects extends AnimationTimer
 	{
 
 		public void handle(long now)
 		{
-			gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+			//gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 			gc.drawImage(players.get(0).getImage(), 180 + x, 100 + y);
 		}
 
-		/*public void startAnimation()
-		{
-			for(GameObject object: players)
-			{
-				x+=1;
-				gc.drawImage(object.getImage(), 180 + x, 100);
-			}
-		}*/
 	}
 
 	public void handle(final InputEvent event)
@@ -62,25 +63,34 @@ public class Defender extends Application implements EventHandler<InputEvent>
 	{
 		stage.setTitle("Defender");
 		Group root = new Group();
-		canvas = new Canvas(800, 400);
+
+		canvas = new Canvas(800, 450);
 		root.getChildren().add(canvas);
-		Scene scene = new Scene(root, Color.BLACK);
+
+		Scene scene = new Scene(root);
 		scene.addEventHandler(KeyEvent.KEY_PRESSED,this);
 		stage.setScene(scene);
-		gc = canvas.getGraphicsContext2D();
-		gc.setFill(Color.BLACK);
-		gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
+		gc = canvas.getGraphicsContext2D();
+		background = new Image("TitleScreen.jpg");
 		shipImg = new Image("ship.png");
 
-		players.add(new GameObject(180, 100, shipImg));
-		gc.drawImage(players.get(0).getImage(), 180, 100);
+		if(state == STATE.MENU)
+		{
+			gc.drawImage(background, 0, 0);
 
-		animate = new AnimateObjects();
-		animate.start();
+		}
+		else if(state == STATE.GAME)
+		{
+			players.add(new GameObject(180, 100, shipImg));
+			gc.drawImage(players.get(0).getImage(), 180, 100);
+
+			animate = new AnimateObjects();
+			animate.start();
+		}
 		stage.show();
 
-		
+
 	}
 
 	public static void main(String[]args)
