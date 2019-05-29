@@ -16,33 +16,32 @@ import javafx.event.*;
 import javafx.scene.input.*;
 import javafx.scene.text.*;
 import java.util.ArrayList;
+import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.control.Button;
 
 public class Defender extends Application implements EventHandler<InputEvent>
 {
-	GraphicsContext gc;
-	Image shipImg;
-	Image background;
-	int x = 0;
-	int y = 0;
-	Canvas canvas;
-	AnimateObjects animate;
-	private Menu menu;
-	ArrayList<GameObject> players = new ArrayList<>();
-
-	private enum STATE{
-		MENU,
-		GAME
-	};
-
-	private STATE state = STATE.MENU;
+	private GraphicsContext gc1;
+	private GraphicsContext gc2;
+	private Image shipImg;
+	private Image background;
+	private int x = 0;
+	private int y = 0;
+	private Canvas canvas1;
+	private Canvas canvas2;
+	private AnimateObjects animate;
+	private ArrayList<GameObject> players = new ArrayList<>();
+	private Scene scene1, scene2;
 
 	public class AnimateObjects extends AnimationTimer
 	{
 
 		public void handle(long now)
 		{
-			//gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-			gc.drawImage(players.get(0).getImage(), 180 + x, 100 + y);
+			gc2.clearRect(0, 0, canvas2.getWidth(), canvas2.getHeight());
+			gc2.drawImage(players.get(0).getImage(), 180 + x, 100 + y);
 		}
 
 	}
@@ -62,35 +61,45 @@ public class Defender extends Application implements EventHandler<InputEvent>
 	public void start(Stage stage)
 	{
 		stage.setTitle("Defender");
-		Group root = new Group();
+		Group root1 = new Group();
+		Group root2 = new Group();
+		canvas1 = new Canvas(800, 450);
+		canvas2 = new Canvas(800, 450);
 
-		canvas = new Canvas(800, 450);
-		root.getChildren().add(canvas);
+		root1.getChildren().add(canvas1);
+		root2.getChildren().add(canvas2);
 
-		Scene scene = new Scene(root);
-		scene.addEventHandler(KeyEvent.KEY_PRESSED,this);
-		stage.setScene(scene);
+		Scene scene1 = new Scene(root1);
+		Scene scene2 = new Scene(root2, Color.BLACK);
+		scene1.addEventHandler(KeyEvent.KEY_PRESSED,this);
+		scene2.addEventHandler(KeyEvent.KEY_PRESSED,this);
+		stage.setScene(scene1);
 
-		gc = canvas.getGraphicsContext2D();
+		Button button = new Button("Play Game");
+		button.setTranslateX(280);
+		button.setTranslateY(315);
+		button.setPrefSize(230, 35);
+		button.setStyle("-fx-background-color: #E76B03; ");
+
+		button.setOnAction(value ->  {
+			stage.setScene(scene2);
+        });
+
+		root1.getChildren().add(button);
+
+		gc1 = canvas1.getGraphicsContext2D();
+		gc2 = canvas2.getGraphicsContext2D();
 		background = new Image("TitleScreen.jpg");
 		shipImg = new Image("ship.png");
 
-		if(state == STATE.MENU)
-		{
-			gc.drawImage(background, 0, 0);
-
-		}
-		else if(state == STATE.GAME)
-		{
-			players.add(new GameObject(180, 100, shipImg));
-			gc.drawImage(players.get(0).getImage(), 180, 100);
-
-			animate = new AnimateObjects();
-			animate.start();
-		}
+		gc1.drawImage(background, 0, 0);
+		players.add(new GameObject(180, 100, shipImg));
+		gc2.drawImage(players.get(0).getImage(), 180, 100);
+	
+		animate = new AnimateObjects();
+		animate.start();
+	
 		stage.show();
-
-
 	}
 
 	public static void main(String[]args)
