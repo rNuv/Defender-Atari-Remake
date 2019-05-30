@@ -25,15 +25,15 @@ public class Defender extends Application implements EventHandler<InputEvent>
 {
 	private GraphicsContext gc1;
 	private GraphicsContext gc2;
-	private Image shipImg;
+	private Image shiprightImg;
+	private Image shipleftImg;
 	private Image background;
-	private int x = 0;
-	private int y = 0;
 	private Canvas canvas1;
 	private Canvas canvas2;
 	private AnimateObjects animate;
 	private ArrayList<GameObject> players = new ArrayList<>();
 	private Scene scene1, scene2;
+	private GameObject player;
 
 	public class AnimateObjects extends AnimationTimer
 	{
@@ -41,7 +41,9 @@ public class Defender extends Application implements EventHandler<InputEvent>
 		public void handle(long now)
 		{
 			gc2.clearRect(0, 0, canvas2.getWidth(), canvas2.getHeight());
-			gc2.drawImage(players.get(0).getImage(), 180 + x, 100 + y);
+			player.setX(player.getVelX());
+			player.setY(player.getVelY());
+			gc2.drawImage(player.getImage(), player.getX(), player.getY());
 		}
 
 	}
@@ -49,13 +51,36 @@ public class Defender extends Application implements EventHandler<InputEvent>
 	public void handle(final InputEvent event)
 	{
 		if (((KeyEvent)event).getCode() == KeyCode.LEFT )
-			x-=5;
-		if (((KeyEvent)event).getCode() == KeyCode.RIGHT )
-			x+=5;
-		if (((KeyEvent)event).getCode() == KeyCode.UP )
-			y-=5;
-		if (((KeyEvent)event).getCode() == KeyCode.DOWN )
-			y+=5;
+		{
+			player.setImage(shipleftImg);
+			player.setVelX(-5);
+		}
+		else if (((KeyEvent)event).getCode() == KeyCode.RIGHT )
+		{
+			player.setImage(shiprightImg);
+			player.setVelX(5);
+		}
+		else if (((KeyEvent)event).getCode() == KeyCode.UP )
+			player.setVelY(-5);
+		else if (((KeyEvent)event).getCode() == KeyCode.DOWN )
+			player.setVelY(5);
+
+		if((((KeyEvent)event).getCode() == KeyCode.RIGHT) && (event.getEventType().toString().equals("KEY_RELEASED")))
+		{
+			player.setVelX(0);
+		}
+		else if((((KeyEvent)event).getCode() == KeyCode.LEFT) && (event.getEventType().toString().equals("KEY_RELEASED")))
+		{
+			player.setVelX(0);
+		}
+		else if((((KeyEvent)event).getCode() == KeyCode.UP) && (event.getEventType().toString().equals("KEY_RELEASED")))
+		{
+			player.setVelY(0);
+		}
+		else if((((KeyEvent)event).getCode() == KeyCode.DOWN) && (event.getEventType().toString().equals("KEY_RELEASED")))
+		{
+			player.setVelY(0);
+		}
 	}
 
 	public void start(Stage stage)
@@ -73,6 +98,7 @@ public class Defender extends Application implements EventHandler<InputEvent>
 		Scene scene2 = new Scene(root2, Color.BLACK);
 		scene1.addEventHandler(KeyEvent.KEY_PRESSED,this);
 		scene2.addEventHandler(KeyEvent.KEY_PRESSED,this);
+		scene2.addEventHandler(KeyEvent.KEY_RELEASED,this);
 		stage.setScene(scene1);
 
 		Button button = new Button("Play Game");
@@ -90,15 +116,17 @@ public class Defender extends Application implements EventHandler<InputEvent>
 		gc1 = canvas1.getGraphicsContext2D();
 		gc2 = canvas2.getGraphicsContext2D();
 		background = new Image("TitleScreen.jpg");
-		shipImg = new Image("ship.png");
+		shiprightImg = new Image("shipright.png");
+		shipleftImg = new Image("shipleft.png");
 
 		gc1.drawImage(background, 0, 0);
-		players.add(new GameObject(180, 100, shipImg));
-		gc2.drawImage(players.get(0).getImage(), 180, 100);
-	
+		player = new GameObject(180, 100, shiprightImg);
+		players.add(player);
+		gc2.drawImage(player.getImage(), 180, 100);
+
 		animate = new AnimateObjects();
 		animate.start();
-	
+
 		stage.show();
 	}
 

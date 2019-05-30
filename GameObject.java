@@ -21,6 +21,8 @@ public class GameObject
 {
 	private int x;
 	private int y;
+	private int velX;
+	private int velY;
 	private Image image;
 	private boolean isAlive;
 
@@ -28,6 +30,8 @@ public class GameObject
 	{
 		this.x = x;
 		this.y = y;
+		velX = 0;
+		velY = 0;
 		this.image = image;
 		isAlive = true;
 	}
@@ -42,8 +46,47 @@ public class GameObject
 		return image;
 	}
 
+	public void setImage(Image image)
+	{
+		this.image = image;
+	}
+
 	public boolean isAlive()
 	{
 		return isAlive;
+	}
+
+	public int getX()
+	{
+		return x;
+	}
+	public int getY()
+	{
+		return y;
+	}
+	public void setX(int x)
+	{
+		this.x += x;
+	}
+	public void setY(int y)
+	{
+		this.y += y;
+	}
+
+	public int getVelX()
+	{
+		return velX;
+	}
+	public int getVelY()
+	{
+		return velY;
+	}
+	public void setVelX(int velX)
+	{
+		this.velX = velX;
+	}
+	public void setVelY(int velY)
+	{
+		this.velY = velY;
 	}
 }
