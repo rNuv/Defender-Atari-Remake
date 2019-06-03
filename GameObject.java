@@ -25,6 +25,7 @@ public class GameObject
 	private int velY;
 	private Image image;
 	private boolean isAlive;
+	private boolean isLaunched;
 
 	public GameObject(int x, int y, Image image)
 	{
@@ -34,6 +35,7 @@ public class GameObject
 		velY = 0;
 		this.image = image;
 		isAlive = true;
+		isLaunched = false;
 	}
 
 	public Rectangle2D bounds()
@@ -54,6 +56,21 @@ public class GameObject
 	public boolean isAlive()
 	{
 		return isAlive;
+	}
+
+	public void changeToDead()
+	{
+		isAlive = false;
+	}
+
+	public boolean isLaunched()
+	{
+		return isLaunched;
+	}
+
+	public void changeLaunched()
+	{
+		isLaunched = true;
 	}
 
 	public int getX()
