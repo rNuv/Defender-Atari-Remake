@@ -20,11 +20,24 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Button;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.Background;
 
 public class Defender extends Application implements EventHandler<InputEvent>
 {
 	private GraphicsContext gc1;
 	private GraphicsContext gc2;
+
+	private ImageView backgroundImageView;
+	//private Pane backgroundLayer;
+	private double backgroundScrollSpeed = 7.0;
+
+	private BackgroundImage bgimg;
+	private StackPane root2;
 	private Image shiprightImg;
 	private Image shipleftImg;
 	private Image titlescreen;
@@ -47,7 +60,9 @@ public class Defender extends Application implements EventHandler<InputEvent>
 		{
 			gc2.clearRect(0, 0, canvas2.getWidth(), canvas2.getHeight());
 
-			gc2.drawImage(background, 0, 0);
+
+			//gc2.drawImage(background, 0,0);
+
 
 			for(int i = 0; i < gameobjectlist.size(); i++)
 			{
@@ -113,7 +128,7 @@ public class Defender extends Application implements EventHandler<InputEvent>
 			{
 				enemies.add(new Enemy((int)(Math.random()*810)+10, (int)(Math.random()*400)+90, enemyImg));
 				enemy_count++;
-			}			
+			}
 
 			for(Enemy e: enemies)
 			{
@@ -129,11 +144,15 @@ public class Defender extends Application implements EventHandler<InputEvent>
 		{
 			player.setImage(shipleftImg);
 			player.setVelX(-7);
+			//double x = backgroundImageView.getLayoutX() - backgroundScrollSpeed;
+			//backgroundImageView.setLayoutX(x);
 		}
 		else if (((KeyEvent)event).getCode() == KeyCode.RIGHT )
 		{
 			player.setImage(shiprightImg);
 			player.setVelX(7);
+			//double x = backgroundImageView.getLayoutX() + backgroundScrollSpeed;
+			//backgroundImageView.setLayoutX(x);
 		}
 		else if (((KeyEvent)event).getCode() == KeyCode.UP )
 		{
@@ -167,19 +186,35 @@ public class Defender extends Application implements EventHandler<InputEvent>
 		}
 	}
 
+	public void loadgame()
+	{
+	 // backgroundImageView = new ImageView( getClass().getResource( "background.jpg").toExternalForm());
+
+	  // reposition the map. it is scrolling from bottom of the background to top of the background
+	 // backgroundImageView.relocate( 0, -backgroundImageView.getImage().getWidth() + 900);
+
+	  // add background to layer
+	  //backgroundLayer.getChildren().add(backgroundImageView);
+	}
+
 	public void start(Stage stage)
 	{
 		stage.setTitle("Defender");
 		Group root1 = new Group();
-		Group root2 = new Group();
+		StackPane root2 = new StackPane();
 		canvas1 = new Canvas(900, 506);
 		canvas2 = new Canvas(900, 506);
 
+		//backgroundLayer = new Pane();
+
 		root1.getChildren().add(canvas1);
 		root2.getChildren().add(canvas2);
+		//root2.getChildren().addAll(backgroundLayer, canvas2);
+
+
 
 		Scene scene1 = new Scene(root1);
-		Scene scene2 = new Scene(root2, Color.BLACK);
+		Scene scene2 = new Scene(root2);
 		scene1.addEventHandler(KeyEvent.KEY_PRESSED,this);
 		scene2.addEventHandler(KeyEvent.KEY_PRESSED,this);
 		scene2.addEventHandler(KeyEvent.KEY_RELEASED,this);
@@ -210,14 +245,18 @@ public class Defender extends Application implements EventHandler<InputEvent>
 		player = new Player(180, 100, shiprightImg);
 		gameobjectlist.add(player);
 
+		bgimg = new BackgroundImage(background, BackgroundRepeat.REPEAT,BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
+		root2.setBackground(new Background(bgimg));
+
 		gc1.drawImage(titlescreen, 0, 0);
-		gc2.drawImage(background, 0, 0);
+		//gc2.drawImage(background, 0, 0);
 		gc2.drawImage(player.getImage(), player.getX(), player.getY());
 
 		animate = new AnimateObjects();
 		animate.start();
 
 		stage.show();
+		//loadgame();
 	}
 
 	public static void main(String[]args)
