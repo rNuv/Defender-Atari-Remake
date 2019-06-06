@@ -63,6 +63,11 @@ public class GameObject
 		isAlive = false;
 	}
 
+	public void changeToAlive()
+	{
+		isAlive = true;
+	}
+
 	public boolean isLaunched()
 	{
 		return isLaunched;
