@@ -31,13 +31,10 @@ public class Defender extends Application implements EventHandler<InputEvent>
 {
 	private GraphicsContext gc1;
 	private GraphicsContext gc2;
-
-	private ImageView backgroundImageView;
-	//private Pane backgroundLayer;
-	private double backgroundScrollSpeed = 7.0;
-
 	private BackgroundImage bgimg;
+	private boolean game = true;
 	private StackPane root2;
+	private Image restartImg;
 	private Image shiprightImg;
 	private Image shipleftImg;
 	private Image titlescreen;
@@ -50,6 +47,7 @@ public class Defender extends Application implements EventHandler<InputEvent>
 	private ArrayList<GameObject> gameobjectlist;
 	private ArrayList<Enemy> enemies;
 	private int enemy_count = 0;
+	private int score = 0;
 	private Scene scene1, scene2;
 	private Player player;
 
