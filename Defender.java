@@ -59,9 +59,13 @@ public class Defender extends Application implements EventHandler<InputEvent>
 		public void handle(long now)
 		{
 			gc2.clearRect(0, 0, canvas2.getWidth(), canvas2.getHeight());
+			gc2.drawImage(background, 0,0);
+			//System.out.println(player.getX() + " " + player.getY());
 
-
-			//gc2.drawImage(background, 0,0);
+			boolean playerAtLeft = player.getX() < 2;
+			boolean playerAtRight = player.getX() > 857;
+			boolean playerAtTop = player.getY() < 86;
+			boolean playerAtBottom = player.getY() > 485;
 
 
 			for(int i = 0; i < gameobjectlist.size(); i++)
@@ -126,13 +130,34 @@ public class Defender extends Application implements EventHandler<InputEvent>
 
 			if(enemy_count == 0)
 			{
-				enemies.add(new Enemy((int)(Math.random()*810)+10, (int)(Math.random()*400)+90, enemyImg));
+				Enemy tempEnemy = new Enemy((int)(Math.random()*810)+10, (int)(Math.random()*370)+100, enemyImg);
+				tempEnemy.setVelX(2);
+				tempEnemy.setVelY(-2);
+				enemies.add(tempEnemy);
 				enemy_count++;
 			}
 
+
 			for(Enemy e: enemies)
 			{
+				e.setX(e.getVelX());
+				e.setY(e.getVelY());
 				gc2.drawImage(e.getImage(), e.getX(), e.getY());
+
+				boolean enemyAtLeft = e.getX() < 2;
+				boolean enemyAtRight = e.getX() > 857;
+				boolean enemyAtTop = e.getY() < 86;
+				boolean enemyAtBottom = e.getY() > 485;
+
+				if(enemyAtLeft || enemyAtRight)
+				{
+					e.setVelX(e.getVelX() * -1);
+				}
+
+				if(enemyAtTop || enemyAtBottom)
+				{
+					e.setVelY(e.getVelY() * -1);
+				}
 			}
 		}
 
@@ -144,15 +169,11 @@ public class Defender extends Application implements EventHandler<InputEvent>
 		{
 			player.setImage(shipleftImg);
 			player.setVelX(-7);
-			//double x = backgroundImageView.getLayoutX() - backgroundScrollSpeed;
-			//backgroundImageView.setLayoutX(x);
 		}
 		else if (((KeyEvent)event).getCode() == KeyCode.RIGHT )
 		{
 			player.setImage(shiprightImg);
 			player.setVelX(7);
-			//double x = backgroundImageView.getLayoutX() + backgroundScrollSpeed;
-			//backgroundImageView.setLayoutX(x);
 		}
 		else if (((KeyEvent)event).getCode() == KeyCode.UP )
 		{
@@ -186,17 +207,6 @@ public class Defender extends Application implements EventHandler<InputEvent>
 		}
 	}
 
-	public void loadgame()
-	{
-	 // backgroundImageView = new ImageView( getClass().getResource( "background.jpg").toExternalForm());
-
-	  // reposition the map. it is scrolling from bottom of the background to top of the background
-	 // backgroundImageView.relocate( 0, -backgroundImageView.getImage().getWidth() + 900);
-
-	  // add background to layer
-	  //backgroundLayer.getChildren().add(backgroundImageView);
-	}
-
 	public void start(Stage stage)
 	{
 		stage.setTitle("Defender");
@@ -205,11 +215,10 @@ public class Defender extends Application implements EventHandler<InputEvent>
 		canvas1 = new Canvas(900, 506);
 		canvas2 = new Canvas(900, 506);
 
-		//backgroundLayer = new Pane();
 
 		root1.getChildren().add(canvas1);
 		root2.getChildren().add(canvas2);
-		//root2.getChildren().addAll(backgroundLayer, canvas2);
+
 
 
 
@@ -249,14 +258,13 @@ public class Defender extends Application implements EventHandler<InputEvent>
 		root2.setBackground(new Background(bgimg));
 
 		gc1.drawImage(titlescreen, 0, 0);
-		//gc2.drawImage(background, 0, 0);
+		gc2.drawImage(background, 0, 0);
 		gc2.drawImage(player.getImage(), player.getX(), player.getY());
 
 		animate = new AnimateObjects();
 		animate.start();
 
 		stage.show();
-		//loadgame();
 	}
 
 	public static void main(String[]args)
