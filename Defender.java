@@ -65,21 +65,25 @@ public class Defender extends Application implements EventHandler<InputEvent>
 
 			gc2.clearRect(0, 0, canvas2.getWidth(), canvas2.getHeight());
 			gc2.setFont(Font.loadFont("file:Fleftex_M.ttf", 35));
-			gc2.setFill(Color.YELLOW);
 			gc2.setStroke(Color.BLACK);
 			gc2.setLineWidth(1);
 
 			if(!(game))
 			{
+				gc2.setFill(Color.YELLOW);
 				gc2.drawImage(restartImg, 0, 0);
 				gc2.fillText("Game0ver", 350, 225);
 				gc2.strokeText("GameOver", 350, 225);
 				gc2.fillText("Click Space t0 Restart", 175, 275);
 				gc2.strokeText("Click Space t0 Restart", 175, 275);
+				score = 0;
 			}
 			else
 			{
+				gc2.setFill(Color.WHITE);
 				gc2.drawImage(background, 0,0);
+				gc2.fillText("Sc0re: " + score, 75, 75, 175);
+				gc2.strokeText("Sc0re: " + score, 75, 75, 175);
 				for(int i = 0; i < gameobjectlist.size(); i++)
 				{
 					if(!(gameobjectlist.get(i).isAlive()))
@@ -134,6 +138,7 @@ public class Defender extends Application implements EventHandler<InputEvent>
 							{
 								e.changeToDead();
 								enemy_count--;
+								score+=100;
 							}
 						}
 						else if(i instanceof Player)
@@ -148,11 +153,26 @@ public class Defender extends Application implements EventHandler<InputEvent>
 				}
 
 
-				if(enemy_count == 0)
+				if(enemy_count < 2)
 				{
 					Enemy tempEnemy = new Enemy((int)(Math.random()*810)+10, (int)(Math.random()*370)+100, enemyImg);
-					tempEnemy.setVelX(2);
-					tempEnemy.setVelY(-2);
+					
+					int velX =(int)(Math.random()*4)+1;
+					int velY = (int)(Math.random()*4)+1;
+					int dir1 = (int)(Math.random()*2)+1;
+					int dir2 = (int)(Math.random()*2)+1;
+
+					if(dir1 == 2)
+					{
+						velX *= -1; 
+					}
+					if(dir2 == 2)
+					{
+						velY *= -1;
+					}
+
+					tempEnemy.setVelX(velX);
+					tempEnemy.setVelY(velY);
 					enemies.add(tempEnemy);
 					enemy_count++;
 				}
@@ -260,8 +280,9 @@ public class Defender extends Application implements EventHandler<InputEvent>
 
 		Button button = new Button("Play Game");
 		button.setTranslateX(330);
-		button.setTranslateY(315);
+		button.setTranslateY(335);
 		button.setPrefSize(230, 35);
+		button.setFont(Font.loadFont("file:Fleftex_M.ttf", 14));
 		button.setStyle("-fx-background-color: #E76B03; ");
 
 		button.setOnAction(value ->  {
