@@ -29,6 +29,12 @@ import javafx.scene.layout.Background;
 
 public class Defender extends Application implements EventHandler<InputEvent>
 {
+	private URL resourceGun1;
+	private AudioClip clipGun1;
+	private URL resourceGun2;
+	private AudioClip clipGun2;
+	private URL resourceExplosion;
+	private AudioClip clipExplosion;
 	private GraphicsContext gc1;
 	private GraphicsContext gc2;
 	private BackgroundImage bgimg;
@@ -57,7 +63,7 @@ public class Defender extends Application implements EventHandler<InputEvent>
 		public void handle(long now)
 		{
 			gc2.clearRect(0, 0, canvas2.getWidth(), canvas2.getHeight());
-			
+
 			boolean playerAtLeft = player.getX() < 2;
 			boolean playerAtRight = player.getX() > 857;
 			boolean playerAtTop = player.getY() < 86;
@@ -146,6 +152,7 @@ public class Defender extends Application implements EventHandler<InputEvent>
 							if(i.bounds().intersects(e.bounds()))
 							{
 								player.changeToDead();
+								clipExplosion.play();
 								game = false;
 							}
 						}
@@ -156,7 +163,7 @@ public class Defender extends Application implements EventHandler<InputEvent>
 				if(enemy_count < 2)
 				{
 					Enemy tempEnemy = new Enemy((int)(Math.random()*810)+10, (int)(Math.random()*370)+100, enemyImg);
-					
+
 					int velX =(int)(Math.random()*4)+1;
 					int velY = (int)(Math.random()*4)+1;
 					int dir1 = (int)(Math.random()*2)+1;
@@ -164,7 +171,7 @@ public class Defender extends Application implements EventHandler<InputEvent>
 
 					if(dir1 == 2)
 					{
-						velX *= -1; 
+						velX *= -1;
 					}
 					if(dir2 == 2)
 					{
@@ -229,6 +236,7 @@ public class Defender extends Application implements EventHandler<InputEvent>
 			if(game)
 			{
 				gameobjectlist.add(new GameObject(player.getX(), player.getY(), bulletImg));
+				clipGun2.play();
 			}
 			else
 			{
@@ -294,13 +302,19 @@ public class Defender extends Application implements EventHandler<InputEvent>
 
 		gc1 = canvas1.getGraphicsContext2D();
 		gc2 = canvas2.getGraphicsContext2D();
+		resourceGun1 = getClass().getResource("SciFiGun3.wav");
+		resourceGun2 = getClass().getResource("SciFiGun12.wav");
+		resourceExplosion = getClass().getResource("Explosion4.wav");
+		clipGun1 = new AudioClip(resourceGun1.toString());
+		clipGun2 = new AudioClip(resourceGun2.toString());
+		clipExplosion = new AudioClip(resourceExplosion.toString());
 		gameobjectlist = new ArrayList<>();
 		enemies = new ArrayList<>();
 		titlescreen = new Image("TitleScreen.jpg");
 		background = new Image("background.jpg");
 		shiprightImg = new Image("shipright.png");
 		shipleftImg = new Image("shipleft.png");
-		bulletImg = new Image("bullet.png");
+		bulletImg = new Image("bullet.png ");
 		enemyImg = new Image("enemy.png");
 		restartImg = new Image("restart.jpg");
 		player = new Player(180, 100, shiprightImg);
