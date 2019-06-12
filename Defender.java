@@ -38,7 +38,9 @@ public class Defender extends Application implements EventHandler<InputEvent>
 	private GraphicsContext gc1;
 	private GraphicsContext gc2;
 	private BackgroundImage bgimg;
-	private boolean game = true;
+	private boolean game = false;
+	private boolean boundX = false;
+	private boolean boundY = false;
 	private StackPane root2;
 	private Image restartImg;
 	private Image shiprightImg;
@@ -54,6 +56,7 @@ public class Defender extends Application implements EventHandler<InputEvent>
 	private ArrayList<Enemy> enemies;
 	private int enemy_count = 0;
 	private int score = 0;
+	private int lives = 0;
 	private Scene scene1, scene2;
 	private Player player;
 
@@ -63,16 +66,10 @@ public class Defender extends Application implements EventHandler<InputEvent>
 		public void handle(long now)
 		{
 			gc2.clearRect(0, 0, canvas2.getWidth(), canvas2.getHeight());
-
-			boolean playerAtLeft = player.getX() < 2;
-			boolean playerAtRight = player.getX() > 857;
-			boolean playerAtTop = player.getY() < 86;
-			boolean playerAtBottom = player.getY() > 485;
-
-			gc2.clearRect(0, 0, canvas2.getWidth(), canvas2.getHeight());
 			gc2.setFont(Font.loadFont("file:Fleftex_M.ttf", 35));
 			gc2.setStroke(Color.BLACK);
 			gc2.setLineWidth(1);
+
 
 			if(!(game))
 			{
@@ -90,6 +87,50 @@ public class Defender extends Application implements EventHandler<InputEvent>
 				gc2.drawImage(background, 0,0);
 				gc2.fillText("Sc0re: " + score, 75, 75, 175);
 				gc2.strokeText("Sc0re: " + score, 75, 75, 175);
+
+				System.out.println(lives);
+
+				boolean playerAtLeft = player.getX() < 2;
+				boolean playerAtRight = player.getX() > 857;
+				boolean playerAtTop = player.getY() < 86;
+				boolean playerAtBottom = player.getY() > 485;
+
+				if(playerAtLeft || playerAtRight)
+				{
+					boundX = true;
+					player.setVelX(0);
+					if(playerAtLeft)
+					{
+						player.changeX(5);
+					}
+					else
+					{
+						player.changeX(-5);
+					}
+				}
+				else
+				{
+					boundX = false;
+				}
+
+				if(playerAtBottom || playerAtTop)
+				{
+					boundY = true;
+					player.setVelY(0);
+					if(playerAtBottom)
+					{
+						player.changeY(-5);
+					}
+					else
+					{
+						player.changeY(5);
+					}
+				}
+				else
+				{
+					boundY = false;
+				}
+
 				for(int i = 0; i < gameobjectlist.size(); i++)
 				{
 					if(!(gameobjectlist.get(i).isAlive()))
@@ -106,12 +147,16 @@ public class Defender extends Application implements EventHandler<InputEvent>
 					}
 				}
 
+				for(int i = 1; i < lives + 1; i++){
+					gc2.drawImage(shiprightImg, (650 + (i * 50)), 50);
+				}
+
 				for(GameObject i: gameobjectlist)
 				{
 					if(i instanceof Player)
 					{
-						i.setX(i.getVelX());
-						i.setY(i.getVelY());
+						i.changeX(i.getVelX());
+						i.changeY(i.getVelY());
 						gc2.drawImage(i.getImage(), i.getX(), i.getY());
 					}
 					else
@@ -132,7 +177,7 @@ public class Defender extends Application implements EventHandler<InputEvent>
 								i.changeLaunched();
 							}
 						}
-						i.setX(i.getVelX());
+						i.changeX(i.getVelX());
 						gc2.drawImage(i.getImage(), i.getX(), i.getY());
 					}
 
@@ -151,44 +196,52 @@ public class Defender extends Application implements EventHandler<InputEvent>
 						{
 							if(i.bounds().intersects(e.bounds()))
 							{
-								player.changeToDead();
+								lives--;
 								clipExplosion.play();
-								game = false;
+								player.setX(180);
+								player.setY(100);
+								if(lives == 0)
+								{
+									player.changeToDead();
+									game = false;
+									//enemies.removeAll(enemies);
+								}
 							}
 						}
 					}
 				}
 
-
-				if(enemy_count < 2)
+				if(game)
 				{
-					Enemy tempEnemy = new Enemy((int)(Math.random()*810)+10, (int)(Math.random()*370)+100, enemyImg);
-
-					int velX =(int)(Math.random()*4)+1;
-					int velY = (int)(Math.random()*4)+1;
-					int dir1 = (int)(Math.random()*2)+1;
-					int dir2 = (int)(Math.random()*2)+1;
-
-					if(dir1 == 2)
+					if(enemy_count < 2)
 					{
-						velX *= -1;
-					}
-					if(dir2 == 2)
-					{
-						velY *= -1;
-					}
+						Enemy tempEnemy = new Enemy((int)(Math.random()*810)+10, (int)(Math.random()*370)+100, enemyImg);
 
-					tempEnemy.setVelX(velX);
-					tempEnemy.setVelY(velY);
-					enemies.add(tempEnemy);
-					enemy_count++;
+						int velX =(int)(Math.random()*4)+1;
+						int velY = (int)(Math.random()*4)+1;
+						int dir1 = (int)(Math.random()*2)+1;
+						int dir2 = (int)(Math.random()*2)+1;
+
+						if(dir1 == 2)
+						{
+							velX *= -1;
+						}
+						if(dir2 == 2)
+						{
+							velY *= -1;
+						}
+
+						tempEnemy.setVelX(velX);
+						tempEnemy.setVelY(velY);
+						enemies.add(tempEnemy);
+						enemy_count++;
+					}
 				}
-
 
 				for(Enemy e: enemies)
 				{
-					e.setX(e.getVelX());
-					e.setY(e.getVelY());
+					e.changeX(e.getVelX());
+					e.changeY(e.getVelY());
 					gc2.drawImage(e.getImage(), e.getX(), e.getY());
 
 					boolean enemyAtLeft = e.getX() < 2;
@@ -212,58 +265,66 @@ public class Defender extends Application implements EventHandler<InputEvent>
 
 	public void handle(final InputEvent event)
 	{
-		if (((KeyEvent)event).getCode() == KeyCode.LEFT )
+		if(!(boundX))
 		{
-			player.setImage(shipleftImg);
-			player.setVelX(-7);
-		}
-		else if (((KeyEvent)event).getCode() == KeyCode.RIGHT )
-		{
-			player.setImage(shiprightImg);
-			player.setVelX(7);
-		}
-		else if (((KeyEvent)event).getCode() == KeyCode.UP )
-		{
-			player.setVelY(-7);
-		}
-		else if (((KeyEvent)event).getCode() == KeyCode.DOWN )
-		{
-			player.setVelY(7);
-		}
-
-		if (((KeyEvent)event).getCode() == KeyCode.SPACE )
-		{
-			if(game)
+			if (((KeyEvent)event).getCode() == KeyCode.LEFT )
 			{
-				gameobjectlist.add(new GameObject(player.getX(), player.getY(), bulletImg));
-				clipGun2.play();
+				player.setImage(shipleftImg);
+				player.setVelX(-7);
 			}
-			else
+			if (((KeyEvent)event).getCode() == KeyCode.RIGHT )
 			{
-				gc2.clearRect(0, 0, canvas2.getWidth(), canvas2.getHeight());
-				game = true;
-				player.changeToAlive();
-				player.setX(180);
-				player.setY(100);
+				player.setImage(shiprightImg);
+				player.setVelX(7);
 			}
 		}
 
-		if((((KeyEvent)event).getCode() == KeyCode.RIGHT) && (event.getEventType().toString().equals("KEY_RELEASED")))
+		if(!(boundY))
 		{
-			player.setVelX(0);
+			if (((KeyEvent)event).getCode() == KeyCode.UP )
+			{
+				player.setVelY(-7);
+			}
+			if (((KeyEvent)event).getCode() == KeyCode.DOWN )
+			{
+				player.setVelY(7);
+			}
 		}
-		else if((((KeyEvent)event).getCode() == KeyCode.LEFT) && (event.getEventType().toString().equals("KEY_RELEASED")))
-		{
-			player.setVelX(0);
-		}
-		else if((((KeyEvent)event).getCode() == KeyCode.UP) && (event.getEventType().toString().equals("KEY_RELEASED")))
-		{
-			player.setVelY(0);
-		}
-		else if((((KeyEvent)event).getCode() == KeyCode.DOWN) && (event.getEventType().toString().equals("KEY_RELEASED")))
-		{
-			player.setVelY(0);
-		}
+
+			if (((KeyEvent)event).getCode() == KeyCode.SPACE )
+			{
+				if(game)
+				{
+					gameobjectlist.add(new GameObject(player.getX(), player.getY(), bulletImg));
+					clipGun2.play();
+				}
+				else
+				{
+					gc2.clearRect(0, 0, canvas2.getWidth(), canvas2.getHeight());
+					game = true;
+					lives = 3;
+					player.changeToAlive();
+					player.changeX(180);
+					player.changeY(100);
+				}
+			}
+
+			if((((KeyEvent)event).getCode() == KeyCode.RIGHT) && (event.getEventType().toString().equals("KEY_RELEASED")))
+			{
+				player.setVelX(0);
+			}
+			else if((((KeyEvent)event).getCode() == KeyCode.LEFT) && (event.getEventType().toString().equals("KEY_RELEASED")))
+			{
+				player.setVelX(0);
+			}
+			else if((((KeyEvent)event).getCode() == KeyCode.UP) && (event.getEventType().toString().equals("KEY_RELEASED")))
+			{
+				player.setVelY(0);
+			}
+			else if((((KeyEvent)event).getCode() == KeyCode.DOWN) && (event.getEventType().toString().equals("KEY_RELEASED")))
+			{
+				player.setVelY(0);
+			}
 	}
 
 	public void start(Stage stage)
@@ -310,6 +371,7 @@ public class Defender extends Application implements EventHandler<InputEvent>
 		clipExplosion = new AudioClip(resourceExplosion.toString());
 		gameobjectlist = new ArrayList<>();
 		enemies = new ArrayList<>();
+		lives = 3;
 		titlescreen = new Image("TitleScreen.jpg");
 		background = new Image("background.jpg");
 		shiprightImg = new Image("shipright.png");

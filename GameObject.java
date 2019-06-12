@@ -88,9 +88,17 @@ public class GameObject
 	}
 	public void setX(int x)
 	{
-		this.x += x;
+		this.x = x;
 	}
 	public void setY(int y)
+	{
+		this.y = y;
+	}
+	public void changeX(int x)
+	{
+		this.x += x;
+	}
+	public void changeY(int y)
 	{
 		this.y += y;
 	}
