@@ -45,6 +45,7 @@ public class Defender extends Application implements EventHandler<InputEvent>
 	private boolean boundY = false;
 	private StackPane root2;
 	private Image restartImg;
+	private Image smartBombImg;
 	private Image shiprightImg;
 	private Image shipleftImg;
 	private Image titlescreen;
@@ -56,6 +57,7 @@ public class Defender extends Application implements EventHandler<InputEvent>
 	private AnimateObjects animate;
 	private ArrayList<GameObject> gameobjectlist;
 	private ArrayList<Enemy> enemies;
+	private ArrayList<SmartBomb> bombs;
 	private int enemy_count = 0;
 	//private int enemy_killed = 0;
 	//private int limit = 2;
@@ -121,6 +123,11 @@ public class Defender extends Application implements EventHandler<InputEvent>
 					boundX = false;
 				}
 
+				if((score % 800 == 0) && (score != 0))
+				{
+					bombs.add(new SmartBomb(180, 100, smartBombImg));
+				}
+
 				if(playerAtBottom || playerAtTop)
 				{
 					boundY = true;
@@ -155,8 +162,21 @@ public class Defender extends Application implements EventHandler<InputEvent>
 					}
 				}
 
+				for(int i = 0; i < bombs.size(); i++)
+				{
+					if(!(bombs.get(i).isAlive()))
+					{
+						bombs.remove(i);
+					}
+				}
+
 				for(int i = 1; i < lives + 1; i++){
 					gc2.drawImage(shiprightImg, (650 + (i * 50)), 50);
+				}
+
+				for(SmartBomb b: bombs)
+				{
+					gc2.drawImage(b.getImage(), b.getX(), b.getY());
 				}
 
 				for(GameObject i: gameobjectlist)
@@ -209,12 +229,6 @@ public class Defender extends Application implements EventHandler<InputEvent>
 								clipExplosion.play();
 								player.setX(180);
 								player.setY(100);
-								if(lives == 0)
-								{
-									player.changeToDead();
-									game = false;
-									//enemies.removeAll(enemies);
-								}
 							}
 						}
 					}
@@ -268,6 +282,15 @@ public class Defender extends Application implements EventHandler<InputEvent>
 						e.setVelY(e.getVelY() * -1);
 					}
 				}
+
+				if(lives == 0)
+				{
+					player.changeToDead();
+					game = false;
+					enemy_count = 0;
+					enemies.clear();
+				}
+
 			}
 		}
 	}
@@ -381,8 +404,10 @@ public class Defender extends Application implements EventHandler<InputEvent>
 		resourceExplosion = getClass().getResource("Explosion4.wav");
 		clipGun1 = new AudioClip(resourceGun1.toString());
 		clipGun2 = new AudioClip(resourceGun2.toString());
+		clipExplosion = new AudioClip(resourceExplosion.toString());
 		gameobjectlist = new ArrayList<>();
 		enemies = new ArrayList<>();
+		bombs = new ArrayList<>();
 		lives = 3;
 		titlescreen = new Image("TitleScreen.jpg");
 		background = new Image("background.jpg");
@@ -391,6 +416,7 @@ public class Defender extends Application implements EventHandler<InputEvent>
 		bulletImg = new Image("bullet.png");
 		enemyImg = new Image("enemy.png");
 		restartImg = new Image("restart.jpg");
+		smartBombImg = new Image("smartBombImg.png");
 		player = new Player(180, 100, shiprightImg);
 		gameobjectlist.add(player);
 
