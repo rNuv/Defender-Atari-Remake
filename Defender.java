@@ -35,6 +35,8 @@ public class Defender extends Application implements EventHandler<InputEvent>
 	private AudioClip clipGun2;
 	private URL resourceExplosion;
 	private AudioClip clipExplosion;
+	private URL resourcetheme;
+	private AudioClip clipTheme;
 	private GraphicsContext gc1;
 	private GraphicsContext gc2;
 	private BackgroundImage bgimg;
@@ -55,6 +57,8 @@ public class Defender extends Application implements EventHandler<InputEvent>
 	private ArrayList<GameObject> gameobjectlist;
 	private ArrayList<Enemy> enemies;
 	private int enemy_count = 0;
+	//private int enemy_killed = 0;
+	//private int limit = 2;
 	private int score = 0;
 	private int lives = 0;
 	private Scene scene1, scene2;
@@ -88,12 +92,16 @@ public class Defender extends Application implements EventHandler<InputEvent>
 				gc2.fillText("Sc0re: " + score, 75, 75, 175);
 				gc2.strokeText("Sc0re: " + score, 75, 75, 175);
 
-				System.out.println(lives);
-
 				boolean playerAtLeft = player.getX() < 2;
 				boolean playerAtRight = player.getX() > 857;
 				boolean playerAtTop = player.getY() < 86;
 				boolean playerAtBottom = player.getY() > 485;
+
+				/*if(enemy_killed % 25 == 0 && enemy_killed != 0)
+				{
+					limit++;
+					enemy_killed++;
+				}*/
 
 				if(playerAtLeft || playerAtRight)
 				{
@@ -189,6 +197,7 @@ public class Defender extends Application implements EventHandler<InputEvent>
 							{
 								e.changeToDead();
 								enemy_count--;
+								//enemy_killed++;
 								score+=100;
 							}
 						}
@@ -335,6 +344,9 @@ public class Defender extends Application implements EventHandler<InputEvent>
 		canvas1 = new Canvas(900, 506);
 		canvas2 = new Canvas(900, 506);
 
+		resourcetheme = getClass().getResource("theme.wav");
+		clipTheme = new AudioClip(resourcetheme.toString());
+		clipTheme.play();
 
 		root1.getChildren().add(canvas1);
 		root2.getChildren().add(canvas2);
@@ -355,6 +367,7 @@ public class Defender extends Application implements EventHandler<InputEvent>
 		button.setStyle("-fx-background-color: #E76B03; ");
 
 		button.setOnAction(value ->  {
+			clipTheme.stop();
 			game = true;
 			stage.setScene(scene2);
         });
@@ -368,7 +381,6 @@ public class Defender extends Application implements EventHandler<InputEvent>
 		resourceExplosion = getClass().getResource("Explosion4.wav");
 		clipGun1 = new AudioClip(resourceGun1.toString());
 		clipGun2 = new AudioClip(resourceGun2.toString());
-		clipExplosion = new AudioClip(resourceExplosion.toString());
 		gameobjectlist = new ArrayList<>();
 		enemies = new ArrayList<>();
 		lives = 3;
@@ -376,7 +388,7 @@ public class Defender extends Application implements EventHandler<InputEvent>
 		background = new Image("background.jpg");
 		shiprightImg = new Image("shipright.png");
 		shipleftImg = new Image("shipleft.png");
-		bulletImg = new Image("bullet.png ");
+		bulletImg = new Image("bullet.png");
 		enemyImg = new Image("enemy.png");
 		restartImg = new Image("restart.jpg");
 		player = new Player(180, 100, shiprightImg);
