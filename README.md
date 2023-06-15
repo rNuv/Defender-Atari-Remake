@@ -13,5 +13,5 @@ This was the home screen. That's how you know it was cool.
 
 ## Technologies
 - ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
-
+---
 *Made with <3 by Arnav, circa 2018*
