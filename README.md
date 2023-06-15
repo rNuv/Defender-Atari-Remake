@@ -5,7 +5,7 @@ A JavaFX remake of an old Atari game called Defender. I made it 5 years ago so I
 
 ## Pictures
 ![image](TitleScreen.jpg)  
-<i style="text-align: center;">This was a picture of the home screen. That's how you know it was cool.</i>
+<figcaption align = "center"><i>This was the home screen. That's how you know it was cool.</i></figcaption>
 
 ## Technologies
 - ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
