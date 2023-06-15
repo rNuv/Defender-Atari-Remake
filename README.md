@@ -4,7 +4,9 @@
 A JavaFX remake of an old Atari game called Defender. I made it 5 years ago so I don't have pictures. But it was cool, trust me...
 
 ## Pictures
-<img src="TitleScreen.jpg" alt="" align="center">
+<div align="center">
+  <img src="TitleScreen.jpg" alt="">
+</div>
 <p align="center">
 This was the home screen. That's how you know it was cool.
 </p>
