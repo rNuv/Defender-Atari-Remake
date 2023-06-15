@@ -8,4 +8,4 @@ A JavaFX remake of an old Atari game called Defender. I made it 5 years ago so I
 *This is a picture of the home screen. That's how you know it was cool.*
 
 ## Technologies
-- Java/JavaFX 
+- Java/JavaFX ![image](javalogo.jpg) 
